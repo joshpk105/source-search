@@ -199,11 +199,12 @@ chrome.storage.onChange.addListener((changes, area) => {
         console.log('Library updated: ', changes.library?.newValue);
         setDebugMode(debugMode);
       }
-})*/
+})
 
 function addLibrary() {
     var lib = document.getElementById("newLibrary");
-    console.log(lib)
+    example[lib.value] = [];
+    updateTree();
 }
 
 function constructParent(key, sites) {
@@ -231,15 +232,108 @@ function constructParent(key, sites) {
     return(li);
 }
 
-var example = {"src" : ["github.com"], "news" : ["npr.com","nbc.com"]};
-var ul = document.getElementById("myUL");
-for (const [key, entry] of Object.entries(example)) {
-    console.log(key);
-    console.log(entry);
-    console.log(ul);
-    ul.appendChild(constructParent(key, entry));
+// For some reason this doesn't clear children correctly
+// probably due to defered call?
+function updateTree() {
+  var ul = document.getElementById("myUL");
+  console.log("Children count: ", ul.children.length);
+  for (var i = 0; i < ul.children.length; i++) {
+    console.log(ul.children[i]);
+    ul.removeChild(ul.children[i]);
+  }
+  for (const [key, entry] of Object.entries(example)) {
+      ul.appendChild(constructParent(key, entry));
+  }
 }
 
-var addLib = document.getElementById("addLibrary");
-addLib.addEventListener('click', () => manager.cancelAllAlarms());
+var example = {"src" : ["github.com"], "news" : ["npr.com","nbc.com"]};
+updateTree();
 
+var addLib = document.getElementById("addLibrary");
+addLib.addEventListener('click', () => addLibrary());
+
+
+
+*/
+
+class Library {
+  constructor(key, parent, src, sites) {
+    this.src = src;
+    this.key = key;
+    this.parent = parent;
+    this.li = document.createElement("li");
+    this.ul = document.createElement("ul");
+    this.li.textContent = key;
+    this.del = document.createElement("button");
+    this.del.textContent = "Delete";
+    this.li.appendChild(this.del);
+    this.input = document.createElement("input",{"type": "text"});
+    this.li.appendChild(this.input);
+    this.add = document.createElement("button");
+    this.add.textContent = "Add";
+    this.li.appendChild(this.add);
+    
+    this.li.appendChild(this.ul);
+    parent.appendChild(this.li);
+    this.initEvents();
+    for(const s in sites) {
+      this.initSite(s);
+    }
+  }
+  initEvents() {
+    let self = this;
+    this.add.addEventListener('click', function(){ self.addSite(); });
+    this.del.addEventListener('click', function(){ self.deleteLibrary(); });
+  }
+  deleteLibrary() {
+    console.log("delete", this);
+    this.src.removeLibrary(this.key);
+    this.parent.removeChild(this.li);
+  }
+  initSite(s) {
+    var li = document.createElement("li");
+    li.textContent = s;
+    this.ul.appendChild(li);
+  }
+  addSite() {
+    console.log("add", this);
+    var li = document.createElement("li");
+    li.textContent = this.input.value;
+    this.ul.appendChild(li);
+  }
+}
+class SourceEditor {
+  constructor(library) {
+    console.log(library);
+    this.library = library;
+    if(this.library == undefined) {
+      this.library = {};
+    }
+    this.addButton = document.getElementById("addLibrary");
+    this.newLibrary = document.getElementById("newLibrary");
+    this.initEvents();
+    for(const l in this.library) {
+      new Library(l, document.body, this, this.library[l]);
+    }
+  }
+  initEvents() {
+    let self = this;
+    this.addButton.addEventListener("click", function(){ self.addLibrary(); });
+  }
+  addLibrary() {
+    this.library[this.newLibrary.value] = [];
+    chrome.storage.sync.set({"library": this.library});
+    new Library(this.newLibrary.value, document.body, this, []);
+  }
+  removeLibrary(key) {
+    if(key in this.library) {
+      delete this.library[key];
+      chrome.storage.sync.set({"library": this.library});
+    }
+  }
+}
+
+let srcEdit;
+chrome.storage.sync.get(["library"], function(result){
+  srcEdit = new SourceEditor(result["library"]);
+});
