@@ -260,6 +260,7 @@ class Library {
   constructor(key, parent, src, sites) {
     this.src = src;
     this.key = key;
+    console.log(key, sites);
     this.parent = parent;
     this.li = document.createElement("li");
     this.ul = document.createElement("ul");
@@ -277,7 +278,7 @@ class Library {
     parent.appendChild(this.li);
     this.initEvents();
     for(const s in sites) {
-      this.initSite(s);
+      this.initSite(sites[s]);
     }
   }
   initEvents() {
@@ -300,6 +301,8 @@ class Library {
     var li = document.createElement("li");
     li.textContent = this.input.value;
     this.ul.appendChild(li);
+    this.src.updateLibrary(this.key, this.input.value);
+    this.input.value = "";
   }
 }
 class SourceEditor {
@@ -328,6 +331,13 @@ class SourceEditor {
   removeLibrary(key) {
     if(key in this.library) {
       delete this.library[key];
+      chrome.storage.sync.set({"library": this.library});
+    }
+  }
+  updateLibrary(key, site) {
+    if(key in this.library) {
+      console.log("key found");
+      this.library[key].push(site);
       chrome.storage.sync.set({"library": this.library});
     }
   }
