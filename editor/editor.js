@@ -256,6 +256,28 @@ addLib.addEventListener('click', () => addLibrary());
 
 */
 
+class Site {
+  constructor(site, parent, library) {
+    this.site = site;
+    this.li = document.createElement("li");
+    this.li.textContent = site;
+    this.del = document.createElement("button");
+    this.del.textContent = "Delete";
+    this.li.appendChild(this.del);
+    parent.appendChild(this.li);
+    this.library = library;
+    this.initEvents();
+  }
+  initEvents() {
+    let self = this;
+    this.del.addEventListener('click', function(){ self.removeSite(); });
+  }
+  removeSite() {
+    this.li.parentNode.removeChild(this.li);
+    this.library.removeSite(this.site);
+  }
+}
+
 class Library {
   constructor(key, parent, src, sites) {
     this.src = src;
@@ -273,12 +295,11 @@ class Library {
     this.add = document.createElement("button");
     this.add.textContent = "Add";
     this.li.appendChild(this.add);
-    
     this.li.appendChild(this.ul);
     parent.appendChild(this.li);
     this.initEvents();
     for(const s in sites) {
-      this.initSite(sites[s]);
+      this.initSite(s);
     }
   }
   initEvents() {
@@ -292,19 +313,18 @@ class Library {
     this.parent.removeChild(this.li);
   }
   initSite(s) {
-    var li = document.createElement("li");
-    li.textContent = s;
-    this.ul.appendChild(li);
+    new Site(s, this.ul, this)
   }
   addSite() {
     console.log("add", this);
-    var li = document.createElement("li");
-    li.textContent = this.input.value;
-    this.ul.appendChild(li);
-    this.src.updateLibrary(this.key, this.input.value);
+    new Site(this.input.value, this.ul, this);
     this.input.value = "";
   }
+  removeSite(s) {
+    this.src.removeLibrarySite(this.key, s);
+  }
 }
+
 class SourceEditor {
   constructor(library) {
     console.log(library);
@@ -324,9 +344,10 @@ class SourceEditor {
     this.addButton.addEventListener("click", function(){ self.addLibrary(); });
   }
   addLibrary() {
-    this.library[this.newLibrary.value] = [];
+    this.library[this.newLibrary.value] = {};
     chrome.storage.sync.set({"library": this.library});
     new Library(this.newLibrary.value, document.body, this, []);
+    this.newLibrary.value = "";
   }
   removeLibrary(key) {
     if(key in this.library) {
@@ -334,11 +355,18 @@ class SourceEditor {
       chrome.storage.sync.set({"library": this.library});
     }
   }
-  updateLibrary(key, site) {
+  addLibrarySite(key, site) {
     if(key in this.library) {
-      console.log("key found");
-      this.library[key].push(site);
+      this.library[key][site] = true;
       chrome.storage.sync.set({"library": this.library});
+    }
+  }
+  removeLibrarySite(key, site) {
+    if(key in this.library) {
+      if(site in this.library[key]){
+        delete this.library[key][site];
+        chrome.storage.sync.set({"library": this.library});
+      }
     }
   }
 }
