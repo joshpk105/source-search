@@ -1,3 +1,14 @@
+.column {
+  float: left;
+  width: 50%;
+}
+
+.row:after {
+  content:"";
+  display: table;
+  clear: both;
+}
+
 /* Remove default bullets */
 ul, #myUL {
     list-style-type: none;

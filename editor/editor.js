@@ -262,7 +262,7 @@ class Site {
     this.li = document.createElement("li");
     this.li.textContent = site;
     this.del = document.createElement("button");
-    this.del.textContent = "Delete";
+    this.del.textContent = "Delete Site";
     this.li.appendChild(this.del);
     parent.appendChild(this.li);
     this.library = library;
@@ -288,12 +288,12 @@ class Library {
     this.ul = document.createElement("ul");
     this.li.textContent = key;
     this.del = document.createElement("button");
-    this.del.textContent = "Delete";
+    this.del.textContent = "Delete Library";
     this.li.appendChild(this.del);
     this.input = document.createElement("input",{"type": "text"});
     this.li.appendChild(this.input);
     this.add = document.createElement("button");
-    this.add.textContent = "Add";
+    this.add.textContent = "Add Site";
     this.li.appendChild(this.add);
     this.li.appendChild(this.ul);
     parent.appendChild(this.li);
@@ -330,6 +330,7 @@ class SourceEditor {
   constructor(library) {
     console.log(library);
     this.library = library;
+    this.dom = document.getElementById("libraryCol");
     if(this.library == undefined) {
       this.library = {};
     }
@@ -338,7 +339,7 @@ class SourceEditor {
     this.initEvents();
     for(const l in this.library) {
       console.log("Init Library", l, this.library[l]);
-      new Library(l, document.body, this, this.library[l]);
+      new Library(l, this.dom, this, this.library[l]);
     }
   }
   initEvents() {
@@ -348,7 +349,7 @@ class SourceEditor {
   addLibrary() {
     this.library[this.newLibrary.value] = {};
     chrome.storage.sync.set({"library": this.library});
-    new Library(this.newLibrary.value, document.body, this, {});
+    new Library(this.newLibrary.value, this.dom, this, {});
     this.newLibrary.value = "";
   }
   removeLibrary(key) {

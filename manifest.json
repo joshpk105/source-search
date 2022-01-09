@@ -6,7 +6,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "omnibox": { "keyword" : "source" },
+  "omnibox": { "keyword" : "ss" },
   "action": {
     "default_icon": {
       "16": "newtab_search16.png",
