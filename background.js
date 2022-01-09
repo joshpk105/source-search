@@ -27,6 +27,7 @@ function constructSiteSearch(sites) {
   return " AND (" + searches.join(" OR ") + ")";
 }
 
+// Should be background cached instead of parsed every time
 chrome.omnibox.onInputEntered.addListener((text) => {
   console.log("OnInputEntered.");
   // Encode user input for special characters , / ? : @ & = + $ #
