@@ -11,6 +11,14 @@ function openDemoTab() {
   chrome.tabs.create({ url: 'editor/editor.html' });
 }
 
+/*
+let searchLibrary;
+chrome.storage.onChanged.addListener((changes, area) => {
+  if(area === 'sync' && changes.options?.newValue) {
+    chrome.storage.suy
+  }
+});*/
+
 function constructSiteSearch(sites) {
   let searches = [];
   for(const s in sites) {
@@ -20,8 +28,10 @@ function constructSiteSearch(sites) {
 }
 
 chrome.omnibox.onInputEntered.addListener((text) => {
+  console.log("OnInputEntered.");
   // Encode user input for special characters , / ? : @ & = + $ #
-  chrome.storage.synv.get(["library"], function(result){
+  chrome.storage.sync.get(["library"], function(result){
+    console.log("In storage get.");
     let parts = text.split(" ");
     let key = parts.shift();
     if(key in result.library) {

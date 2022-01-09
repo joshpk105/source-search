@@ -313,11 +313,12 @@ class Library {
     this.parent.removeChild(this.li);
   }
   initSite(s) {
-    new Site(s, this.ul, this)
+    new Site(s, this.ul, this);
   }
   addSite() {
     console.log("add", this);
     new Site(this.input.value, this.ul, this);
+    this.src.addLibrarySite(this.key, this.input.value);
     this.input.value = "";
   }
   removeSite(s) {
@@ -336,6 +337,7 @@ class SourceEditor {
     this.newLibrary = document.getElementById("newLibrary");
     this.initEvents();
     for(const l in this.library) {
+      console.log("Init Library", l, this.library[l]);
       new Library(l, document.body, this, this.library[l]);
     }
   }
@@ -346,7 +348,7 @@ class SourceEditor {
   addLibrary() {
     this.library[this.newLibrary.value] = {};
     chrome.storage.sync.set({"library": this.library});
-    new Library(this.newLibrary.value, document.body, this, []);
+    new Library(this.newLibrary.value, document.body, this, {});
     this.newLibrary.value = "";
   }
   removeLibrary(key) {
