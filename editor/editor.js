@@ -286,6 +286,8 @@ class Library {
     this.parent = parent;
     this.li = document.createElement("li");
     this.ul = document.createElement("ul");
+    this.errorMsg = document.createElement("ul");
+    this.ul.appendChild(this.errorMsg);
     this.li.textContent = key;
     this.del = document.createElement("button");
     this.del.textContent = "Delete Library";
@@ -304,8 +306,8 @@ class Library {
   }
   initEvents() {
     let self = this;
-    this.add.addEventListener('click', function(){ self.addSite(); });
-    this.del.addEventListener('click', function(){ self.deleteLibrary(); });
+    this.add.addEventListener('click', function(){ self.clearError(); self.addSite(); });
+    this.del.addEventListener('click', function(){ self.clearError(); self.deleteLibrary(); });
   }
   deleteLibrary() {
     console.log("delete", this);
@@ -315,10 +317,20 @@ class Library {
   initSite(s) {
     new Site(s, this.ul, this);
   }
+  clearError(){
+    this.errorMsg.textContent = "";
+  }
   addSite() {
     console.log("add", this);
-    new Site(this.input.value, this.ul, this);
-    this.src.addLibrarySite(this.key, this.input.value);
+    if(this.input.value == "") {
+      return;
+    }
+    if(this.src.addLibrarySite(this.key, this.input.value)){
+      new Site(this.input.value, this.ul, this);
+    }
+    else {
+      this.errorMsg.textContent = "Site already in library: " + this.input.value;
+    }
     this.input.value = "";
   }
   removeSite(s) {
@@ -330,26 +342,36 @@ class SourceEditor {
   constructor(library) {
     console.log(library);
     this.library = library;
-    this.dom = document.getElementById("libraryCol");
+    this.libCol = document.getElementById("libraryCol");
     if(this.library == undefined) {
       this.library = {};
     }
     this.addButton = document.getElementById("addLibrary");
     this.newLibrary = document.getElementById("newLibrary");
+    this.errorMsg = document.createElement("ul");
+    this.libCol.appendChild(this.errorMsg);
     this.initEvents();
     for(const l in this.library) {
       console.log("Init Library", l, this.library[l]);
-      new Library(l, this.dom, this, this.library[l]);
+      new Library(l, this.libCol, this, this.library[l]);
     }
   }
   initEvents() {
     let self = this;
-    this.addButton.addEventListener("click", function(){ self.addLibrary(); });
+    this.addButton.addEventListener("click", function(){ self.clearError(); self.addLibrary(); });
   }
   addLibrary() {
+    if(this.newLibrary.value == "") {
+      return
+    }
+    if(this.newLibrary.value in this.library) {
+      this.errorMsg.textContent = "Library key already exists: " + this.newLibrary.value;
+      this.newLibrary.value = "";
+      return
+    }
     this.library[this.newLibrary.value] = {};
     chrome.storage.sync.set({"library": this.library});
-    new Library(this.newLibrary.value, this.dom, this, {});
+    new Library(this.newLibrary.value, this.libCol, this, {});
     this.newLibrary.value = "";
   }
   removeLibrary(key) {
@@ -360,9 +382,13 @@ class SourceEditor {
   }
   addLibrarySite(key, site) {
     if(key in this.library) {
+      if(site in this.library[key]) {
+        return false;
+      }
       this.library[key][site] = true;
       chrome.storage.sync.set({"library": this.library});
     }
+    return true;
   }
   removeLibrarySite(key, site) {
     if(key in this.library) {
@@ -371,6 +397,9 @@ class SourceEditor {
         chrome.storage.sync.set({"library": this.library});
       }
     }
+  }
+  clearError() {
+    this.errorMsg.textContent = "";
   }
 }
 
