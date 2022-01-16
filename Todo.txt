@@ -2,11 +2,9 @@ To do list in no particular order
  - Add url length error handling
  - Style the editor/settings page
  - Add a way to add current web page to a library?
- - In background.js cache data on change instead of on search
  - Add search engine option
  - Add new tab/current tab option
  - Add way to invert source search (return all results not in sites)
- - Add key suggestions/completion in omnibox
  - Add open-source license
  - Create developer account and release to chrome web store
 

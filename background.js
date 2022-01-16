@@ -11,13 +11,17 @@ function openDemoTab() {
   chrome.tabs.create({ url: 'editor/editor.html' });
 }
 
-/*
-let searchLibrary;
+let libraryCache = {};
+chrome.storage.sync.get(["library"], function(result){
+  console.log("Init libraryCache");
+  libraryCache = result.library;
+});
+
 chrome.storage.onChanged.addListener((changes, area) => {
-  if(area === 'sync' && changes.options?.newValue) {
-    chrome.storage.suy
+  if(area === 'sync' && changes.library?.newValue) {
+    libraryCache = changes.library;
   }
-});*/
+});
 
 function constructSiteSearch(sites) {
   let searches = [];
@@ -27,23 +31,37 @@ function constructSiteSearch(sites) {
   return " AND (" + searches.join(" OR ") + ")";
 }
 
-// Should be background cached instead of parsed every time
 chrome.omnibox.onInputEntered.addListener((text) => {
   console.log("OnInputEntered.");
-  // Encode user input for special characters , / ? : @ & = + $ #
-  chrome.storage.sync.get(["library"], function(result){
-    console.log("In storage get.");
-    let parts = text.split(" ");
-    let key = parts.shift();
-    if(key in result.library) {
-      let search = parts.join(" ") + constructSiteSearch(result.library[key]);
-      var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
-      chrome.tabs.create({ url: newURL });
-    }
-    else {
-      let search = key + " " + parts.join(" ");
-      var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
-      chrome.tabs.create({ url: newURL });
-    }
-  });
+  let parts = text.split(" ");
+  let key = parts.shift();
+  if(key in libraryCache) {
+    let search = parts.join(" ") + constructSiteSearch(libraryCache[key]);
+    var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
+    chrome.tabs.create({ url: newURL });
+  }
+  else {
+    let search = key + " " + parts.join(" ");
+    var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
+    chrome.tabs.create({ url: newURL });
+  }
 });
+
+/* There appears to be an issue with key suggestions in chrome?
+https://github.com/cpv123/github-go-chrome-extension/pull/3
+chrome.omnibox.onInputChanged.addListener((text, suggest) => {
+  let parts = text.split(" ");
+  if(parts[0].length == 0) {
+    return suggest;
+  }
+  console.log("Omni suggest: ", parts[0]);
+  let suggestedKeys = [];
+  for(const k in libraryCache) {
+    console.log("Test Key: ", k);
+    if(k.startsWith(parts[0])){
+      suggestedKeys.push({content: k, description: "one"});
+    }
+  }
+  suggest(suggestedKeys);
+});
+*/

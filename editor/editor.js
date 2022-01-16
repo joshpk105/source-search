@@ -86,6 +86,7 @@ class Library {
   siteFound(site) {
     const http = /^https?:\/\//;
     site = site.replace(http, "");
+    site = site.split("/")[0];
     if(this.src.addLibrarySite(this.key, site)){
       new Site(site, this.ul, this);
     }
