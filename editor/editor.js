@@ -1,3 +1,4 @@
+// Site handles site remove and display operations
 class Site {
   constructor(site, parent, library) {
     this.site = site;
@@ -20,6 +21,7 @@ class Site {
   }
 }
 
+// Library handles library/site settings operations
 class Library {
   constructor(key, parent, src, sites) {
     this.req = new XMLHttpRequest();
@@ -104,6 +106,7 @@ class Library {
   }
 }
 
+// SourceEditor handles source-library settings operations
 class SourceEditor {
   constructor(library) {
     console.log(library);
@@ -169,6 +172,36 @@ class SourceEditor {
   }
 }
 
+// Object handling search engine options
+class SearchEditor {
+  constructor(current) {
+    this.select = document.getElementById("search");
+    if(current != ""){
+      for(let i = 0; i < this.select.length; i++) {
+        if(this.select.children[i].value == current){
+          this.select.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    this.initEvents();
+  }
+  initEvents() {
+    let self = this;
+    this.select.addEventListener('change', function(e){ self.updateEngine(); });
+  }
+  updateEngine() {
+    chrome.storage.sync.set({"search": this.select.value});
+  }
+}
+
+// Initilize search settings object
+let searchEdit;
+chrome.storage.sync.get(["search"], function(result){
+  searchEdit = new SearchEditor(result["search"]);
+});
+
+// Initilize source settings object
 let srcEdit;
 chrome.storage.sync.get(["library"], function(result){
   srcEdit = new SourceEditor(result["library"]);

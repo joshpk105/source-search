@@ -1,6 +1,6 @@
 To do list in no particular order
- - Add search engine option
  - Style the editor/settings page
+ - Create the help doc
  - Add open-source license
  - Create developer account and release to chrome web store
  - Add url length error handling

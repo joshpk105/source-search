@@ -11,18 +11,30 @@ function openDemoTab() {
   chrome.tabs.create({ url: 'editor/editor.html' });
 }
 
+// Initilize search engine
+let searchCache = "https://www.google.com/search?q=";
+chrome.storage.sync.get(["search"], function(result){
+  libraryCache = result.search;
+});
+
+// Initilize library
 let libraryCache = {};
 chrome.storage.sync.get(["library"], function(result){
-  console.log("Init libraryCache");
   libraryCache = result.library;
 });
 
+// Handle settings updates
 chrome.storage.onChanged.addListener((changes, area) => {
   if(area === 'sync' && changes.library?.newValue) {
-    libraryCache = changes.library;
+    libraryCache = changes.library.newValue;
+  }
+  if(area === 'sync' && changes.search?.newValue) {
+    console.log("Search update");
+    searchCache = changes.search.newValue;
   }
 });
 
+// Build the site search string
 function constructSiteSearch(sites) {
   let searches = [];
   for(const s in sites) {
@@ -31,18 +43,18 @@ function constructSiteSearch(sites) {
   return " AND (" + searches.join(" OR ") + ")";
 }
 
+// Handle search input in the omnibox
 chrome.omnibox.onInputEntered.addListener((text) => {
-  console.log("OnInputEntered.");
+  console.log("OnInputEntered. ", searchCache);
   let parts = text.split(" ");
   let key = parts.shift();
   if(key in libraryCache) {
     let search = parts.join(" ") + constructSiteSearch(libraryCache[key]);
-    var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
+    var newURL = searchCache + encodeURIComponent(search);
     chrome.tabs.create({ url: newURL });
   }
   else {
-    let search = key + " " + parts.join(" ");
-    var newURL = 'https://www.google.com/search?q=' + encodeURIComponent(search);
+    var newURL = searchCache + encodeURIComponent(text);
     chrome.tabs.create({ url: newURL });
   }
 });
