@@ -7,5 +7,6 @@ To do list in no particular order
  - Add a way to add current web page to a library?
  - Add new tab/current tab option
  - Add way to invert source search (return all results not in sites)
+ - Add additional advanced search functionality 
 
 

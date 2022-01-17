@@ -1,3 +1,8 @@
+body {
+  background-color: black;
+  color: white;
+}
+
 .column {
   float: left;
   width: 50%;
@@ -9,42 +14,23 @@
   clear: both;
 }
 
+#trashButton {
+  background-color: none;
+  border: none;
+  color: lightcoral;
+  font-size: 16px;
+  background: none;
+}
+
 /* Remove default bullets */
-ul, #myUL {
-    list-style-type: none;
-  }
-  
-  /* Remove margins and padding from the parent ul */
-  #myUL {
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Style the caret/arrow */
-  .caret {
-    cursor: pointer;
-    user-select: none; /* Prevent text selection */
-  }
-  
-  /* Create the caret/arrow with a unicode, and style it */
-  .caret::before {
-    content: "\25B6";
-    color: black;
-    display: inline-block;
-    margin-right: 6px;
-  }
-  
-  /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
-  .caret-down::before {
-    transform: rotate(90deg);
-  }
-  
-  /* Hide the nested list */
-  .nested {
-    display: none;
-  }
-  
-  /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
-  .active {
-    display: block;
-  }
+ul {
+  list-style-type: none;
+}
+
+li {
+  list-style-type: none;
+}
+
+strong {
+  padding-right: 10px;
+}

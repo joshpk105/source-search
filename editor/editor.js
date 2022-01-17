@@ -1,19 +1,27 @@
+// TrashButton creates the common trash button
+class TrashButton {
+  constructor(label, parent) {
+    this.elem = document.createElement("button");
+    this.elem.id = "trashButton";
+    this.elem.textContent = label;
+    parent.appendChild(this.elem);
+  }
+}
+
 // Site handles site remove and display operations
 class Site {
   constructor(site, parent, library) {
     this.site = site;
     this.li = document.createElement("li");
     this.li.textContent = site;
-    this.del = document.createElement("button");
-    this.del.textContent = "Delete Site";
-    this.li.appendChild(this.del);
+    this.del = new TrashButton('\uD83D\uDDD1', this.li);
     parent.appendChild(this.li);
     this.library = library;
     this.initEvents();
   }
   initEvents() {
     let self = this;
-    this.del.addEventListener('click', function(){ self.removeSite(); });
+    this.del.elem.addEventListener('click', function(){ self.removeSite(); });
   }
   removeSite() {
     this.li.parentNode.removeChild(this.li);
@@ -31,12 +39,12 @@ class Library {
     this.parent = parent;
     this.li = document.createElement("li");
     this.ul = document.createElement("ul");
+    this.label = document.createElement("strong");
     this.errorMsg = document.createElement("ul");
     this.ul.appendChild(this.errorMsg);
-    this.li.textContent = key;
-    this.del = document.createElement("button");
-    this.del.textContent = "Delete Library";
-    this.li.appendChild(this.del);
+    this.label.textContent = key;
+    this.del = new TrashButton('\uD83D\uDDD1', this.li);
+    this.li.appendChild(this.label);
     this.input = document.createElement("input",{"type": "text"});
     this.li.appendChild(this.input);
     this.add = document.createElement("button");
@@ -52,7 +60,7 @@ class Library {
   initEvents() {
     let self = this;
     this.add.addEventListener('click', function(){ self.clearError(); self.addSite(); });
-    this.del.addEventListener('click', function(){ self.clearError(); self.deleteLibrary(); });
+    this.del.elem.addEventListener('click', function(){ self.clearError(); self.deleteLibrary(); });
     this.req.addEventListener('load', function(e){ self.siteFound(e); });
     this.req.addEventListener('error', function(e){ self.siteNotFound(e); });
   }

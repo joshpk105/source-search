@@ -14,7 +14,11 @@ function openDemoTab() {
 // Initilize search engine
 let searchCache = "https://www.google.com/search?q=";
 chrome.storage.sync.get(["search"], function(result){
-  libraryCache = result.search;
+  if ("search" in result){
+    searchCache = result.search;
+  } else {
+    searchCache = "https://www.google.com/search?q="
+  }
 });
 
 // Initilize library
