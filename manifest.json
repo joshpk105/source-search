@@ -20,7 +20,8 @@
     "128": "newtab_search128.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
   "host_permissions": [
     "https://*/",

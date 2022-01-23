@@ -203,6 +203,36 @@ class SearchEditor {
   }
 }
 
+// Object handling newTab option
+class NewTabEditor {
+  constructor(current) {
+    this.checkbox = document.getElementById("newTab");
+    if(current === undefined){
+      this.checkbox.checked = true;
+    }
+    else if (current === true) {
+      this.checkbox.checked = true;
+    }
+    else {
+      this.checkbox.checked = false;
+    }
+    this.initEvents();
+  }
+  initEvents() {
+    let self = this;
+    this.checkbox.addEventListener('change', function(e){ self.updateEngine(); });
+  }
+  updateEngine() {
+    chrome.storage.sync.set({"newTab": this.checkbox.checked});
+  }
+}
+
+// Initilize newTab settings object
+let newTabEdit;
+chrome.storage.sync.get(["newTab"], function(result){
+  searchEdit = new NewTabEditor(result["newTab"]);
+});
+
 // Initilize search settings object
 let searchEdit;
 chrome.storage.sync.get(["search"], function(result){

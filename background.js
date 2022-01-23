@@ -10,6 +10,15 @@ chrome.action.onClicked.addListener(openDemoTab);
 function openDemoTab() {
   chrome.tabs.create({ url: 'editor/editor.html' });
 }
+// Initilize new tab
+let newTab = true;
+chrome.storage.sync.get(["newTab"], function(result){
+  if ("newTab" in result){
+    newTab = result.newTab;
+  } else {
+    searchCache = true;
+  }
+});
 
 // Initilize search engine
 let searchCache = "https://www.google.com/search?q=";
@@ -55,11 +64,15 @@ chrome.omnibox.onInputEntered.addListener((text) => {
   if(key in libraryCache) {
     let search = parts.join(" ") + constructSiteSearch(libraryCache[key]);
     var newURL = searchCache + encodeURIComponent(search);
-    chrome.tabs.create({ url: newURL });
   }
   else {
     var newURL = searchCache + encodeURIComponent(text);
+  }
+  if(newTab) {
     chrome.tabs.create({ url: newURL });
+  }
+  else {
+    chrome.tabs.update(undefined, { url: newURL });
   }
 });
 
