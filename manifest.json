@@ -9,15 +9,15 @@
   "omnibox": { "keyword" : "ss" },
   "action": {
     "default_icon": {
-      "16": "newtab_search16.png",
-      "32": "newtab_search32.png"
+      "16": "source-search16.png",
+      "32": "source-search32.png"
       }
   },
   "icons": {
-    "16": "newtab_search16.png",
-    "32": "newtab_search32.png",
-    "48": "newtab_search48.png",
-    "128": "newtab_search128.png"
+    "16": "source-search16.png",
+    "32": "source-search32.png",
+    "48": "source-search48.png",
+    "128": "source-search128.png"
   },
   "permissions": [
     "storage",

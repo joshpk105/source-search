@@ -35,8 +35,6 @@ class Library {
     this.req = new XMLHttpRequest();
     this.src = src;
     this.key = key;
-    console.log(key, sites);
-    this.parent = parent;
     this.li = document.createElement("li");
     this.ul = document.createElement("ul");
     this.label = document.createElement("strong");
@@ -58,16 +56,40 @@ class Library {
     }
   }
   initEvents() {
-    let self = this;
-    this.add.addEventListener('click', function(){ self.clearError(); self.addSite(); });
-    this.del.elem.addEventListener('click', function(){ self.clearError(); self.deleteLibrary(); });
-    this.req.addEventListener('load', function(e){ self.siteFound(e); });
-    this.req.addEventListener('error', function(e){ self.siteNotFound(e); });
+    this.addSiteHandler = this.addSite.bind(this);
+    this.deleteLibraryHandler = this.deleteLibrary.bind(this);
+    this.siteFoundHandler = this.siteFound.bind(this);
+    this.siteNotFoundHandler = this.siteNotFound.bind(this);
+    this.add.addEventListener('click', this.addSiteHandler);
+    this.del.elem.addEventListener('click', this.deleteLibraryHandler);
+    this.req.addEventListener('load', this.siteFoundHandler);
+    this.req.addEventListener('error', this.siteNotFoundHandler);
   }
+  // Library objects seem to leak despite no external references existing
+  // and all internal references set to null.
+  // The Site object cleans up as expected for some reason...
   deleteLibrary() {
+    this.clearError();
     console.log("delete", this);
     this.src.removeLibrary(this.key);
-    this.parent.removeChild(this.li);
+    this.li.parentNode.removeChild(this.li);
+    this.add.removeEventListener('click', this.addSiteHandler);
+    this.del.elem.removeEventListener('click', this.deleteLibraryHandler);
+    this.req.removeEventListener('load', this.siteFoundHandler);
+    this.req.removeEventListener('error', this.siteNotFoundHandler);
+    this.src = null;
+    this.del = null
+    this.req = null;
+    this.add = null;
+    this.addSiteHandler = null;
+    this.deleteLibraryHandler = null;
+    this.siteFoundHandler = null;
+    this.siteNotFoundHandler = null;
+    this.ul = null;
+    this.input = null;
+    this.label = null;
+    this.errorMsg = null;
+    this.li = null;
   }
   initSite(s) {
     new Site(s, this.ul, this);
@@ -76,6 +98,7 @@ class Library {
     this.errorMsg.textContent = "";
   }
   addSite() {
+    this.clearError();
     console.log("add", this);
     if(this.input.value == "") {
       return;
