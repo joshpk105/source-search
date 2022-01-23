@@ -230,7 +230,7 @@ class NewTabEditor {
 // Initilize newTab settings object
 let newTabEdit;
 chrome.storage.sync.get(["newTab"], function(result){
-  searchEdit = new NewTabEditor(result["newTab"]);
+  newTabEdit = new NewTabEditor(result["newTab"]);
 });
 
 // Initilize search settings object
