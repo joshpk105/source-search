@@ -1,3 +1,5 @@
+'use strict';
+
 // TrashButton creates the common trash button
 class TrashButton {
   constructor(label, parent) {
@@ -92,7 +94,7 @@ class Library {
     this.li = null;
   }
   initSite(s) {
-    new Site(s, this.ul, this);
+    let sr = new Site(s, this.ul, this);
   }
   clearError(){
     this.errorMsg.textContent = "";
@@ -121,7 +123,7 @@ class Library {
     site = site.replace(http, "");
     site = site.split("/")[0];
     if(this.src.addLibrarySite(this.key, site)){
-      new Site(site, this.ul, this);
+      let s = new Site(site, this.ul, this);
     }
     else {
       this.errorMsg.textContent = "Site already in library: " + site;
@@ -153,7 +155,7 @@ class SourceEditor {
     this.initEvents();
     for(const l in this.library) {
       console.log("Init Library", l, this.library[l]);
-      new Library(l, this.libCol, this, this.library[l]);
+      let lr = new Library(l, this.libCol, this, this.library[l]);
     }
   }
   initEvents() {
@@ -171,7 +173,7 @@ class SourceEditor {
     }
     this.library[this.newLibrary.value] = {};
     chrome.storage.sync.set({"library": this.library});
-    new Library(this.newLibrary.value, this.libCol, this, {});
+    let l = new Library(this.newLibrary.value, this.libCol, this, {});
     this.newLibrary.value = "";
   }
   removeLibrary(key) {
