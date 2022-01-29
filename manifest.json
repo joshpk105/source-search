@@ -1,6 +1,6 @@
 {
   "name": "Source Search",
-  "description": "Type 'source' plus a search and keywords into the Omnibox to search your sources.",
+  "description": "Maximize your search potential by creating libraries of your trusted internet sources.",
   "version": "0.0.0.1",
   "manifest_version": 3,
   "background": {
