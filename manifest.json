@@ -1,7 +1,7 @@
 {
   "name": "Source Search",
   "description": "Maximize your search potential by creating libraries of your trusted internet sources.",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
@@ -20,8 +20,7 @@
     "128": "source-search128.png"
   },
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
   ],
   "host_permissions": [
     "https://*/",
