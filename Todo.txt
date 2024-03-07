@@ -1,12 +1,9 @@
 To do list in no particular order
+ - Add option for cloud/account config storage
+ - Add additional browser support
  - Style the editor/settings page
- - Create the help doc
- - Add open-source license
- - Create developer account and release to chrome web store
  - Add url length error handling
  - Add a way to add current web page to a library?
- - Add new tab/current tab option
- - Add way to invert source search (return all results not in sites)
  - Add additional advanced search functionality 
 
 
