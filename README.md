@@ -1,4 +1,4 @@
-### Source Search
+# Source Search
 A browser extension for easily searching sets of websites on search engines.
 
 ## Install on Chromium Browser
