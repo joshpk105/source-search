@@ -13,7 +13,7 @@ function openDemoTab() {
 // Initilize new tab
 let newTab = true;
 chrome.storage.sync.get(["newTab"], function(result){
-  console.log("Get new tab state", result);
+  //console.log("Get new tab state", result);
   if ("newTab" in result){
     newTab = result.newTab;
   } else {
