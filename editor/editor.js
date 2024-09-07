@@ -231,6 +231,7 @@ class SearchEditor {
 // Object handling newTab option
 class NewTabEditor {
   constructor(current) {
+    console.log("NewTabEditor", current);
     this.checkbox = document.getElementById("newTab");
     if(current === undefined){
       this.checkbox.checked = true;
@@ -248,6 +249,7 @@ class NewTabEditor {
     this.checkbox.addEventListener('change', function(e){ self.updateEngine(); });
   }
   updateEngine() {
+    console.log("Update NewTabEditor", this.checkbox.checked);
     chrome.storage.sync.set({"newTab": this.checkbox.checked});
   }
 }

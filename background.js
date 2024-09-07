@@ -13,6 +13,7 @@ function openDemoTab() {
 // Initilize new tab
 let newTab = true;
 chrome.storage.sync.get(["newTab"], function(result){
+  console.log("Get new tab state", result);
   if ("newTab" in result){
     newTab = result.newTab;
   } else {
@@ -21,7 +22,9 @@ chrome.storage.sync.get(["newTab"], function(result){
 });
 
 // Initilize search engine
-let searchCache = "https://www.google.com/search?q=";
+// This feature was eliminated by Chrome Web Store rule updates
+/*
+ * let searchCache = "https://www.google.com/search?q=";
 chrome.storage.sync.get(["search"], function(result){
   if ("search" in result){
     searchCache = result.search;
@@ -29,6 +32,7 @@ chrome.storage.sync.get(["search"], function(result){
     searchCache = "https://www.google.com/search?q="
   }
 });
+*/
 
 // Initilize library
 let libraryCache = {};
@@ -41,10 +45,10 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if(area === 'sync' && changes.library?.newValue) {
     libraryCache = changes.library.newValue;
   }
-  if(area === 'sync' && changes.search?.newValue) {
+  /*if(area === 'sync' && changes.search?.newValue) {
     console.log("Search update");
     searchCache = changes.search.newValue;
-  }
+  }*/
 });
 
 // Build the site search string
@@ -58,21 +62,17 @@ function constructSiteSearch(sites) {
 
 // Handle search input in the omnibox
 chrome.omnibox.onInputEntered.addListener((text) => {
-  console.log("OnInputEntered. ", searchCache);
   let parts = text.split(" ");
   let key = parts.shift();
+  let search = text;
   if(key in libraryCache) {
-    let search = parts.join(" ") + constructSiteSearch(libraryCache[key]);
-    var newURL = searchCache + encodeURIComponent(search);
-  }
-  else {
-    var newURL = searchCache + encodeURIComponent(text);
+    search = parts.join(" ") + constructSiteSearch(libraryCache[key]);
   }
   if(newTab) {
-    chrome.tabs.create({ url: newURL });
+    chrome.search.query({disposition: chrome.search.NEW_TAB, text:search});
   }
   else {
-    chrome.tabs.update(undefined, { url: newURL });
+    chrome.search.query({disposition: chrome.search.CURRENT_TAB, text: search});
   }
 });
 
