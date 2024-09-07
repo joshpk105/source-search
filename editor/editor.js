@@ -72,7 +72,7 @@ class Library {
   // The Site object cleans up as expected for some reason...
   deleteLibrary() {
     this.clearError();
-    console.log("delete", this);
+    //console.log("delete", this);
     this.src.removeLibrary(this.key);
     this.li.parentNode.removeChild(this.li);
     this.add.removeEventListener('click', this.addSiteHandler);
@@ -101,7 +101,7 @@ class Library {
   }
   addSite() {
     this.clearError();
-    console.log("add", this);
+    //console.log("add", this);
     if(this.input.value == "") {
       return;
     }
@@ -142,7 +142,7 @@ class Library {
 // SourceEditor handles source-library settings operations
 class SourceEditor {
   constructor(library) {
-    console.log(library);
+    //console.log(library);
     this.library = library;
     this.libCol = document.getElementById("libraryCol");
     if(this.library == undefined) {
@@ -154,7 +154,7 @@ class SourceEditor {
     this.libCol.appendChild(this.errorMsg);
     this.initEvents();
     for(const l in this.library) {
-      console.log("Init Library", l, this.library[l]);
+      //console.log("Init Library", l, this.library[l]);
       let lr = new Library(l, this.libCol, this, this.library[l]);
     }
   }
@@ -206,6 +206,7 @@ class SourceEditor {
 }
 
 // Object handling search engine options
+/* Feature was eliminated by Chrome Web Store Rule changes.
 class SearchEditor {
   constructor(current) {
     this.select = document.getElementById("search");
@@ -226,11 +227,12 @@ class SearchEditor {
   updateEngine() {
     chrome.storage.sync.set({"search": this.select.value});
   }
-}
+}*/
 
 // Object handling newTab option
 class NewTabEditor {
   constructor(current) {
+    //console.log("NewTabEditor", current);
     this.checkbox = document.getElementById("newTab");
     if(current === undefined){
       this.checkbox.checked = true;
@@ -248,6 +250,7 @@ class NewTabEditor {
     this.checkbox.addEventListener('change', function(e){ self.updateEngine(); });
   }
   updateEngine() {
+    //console.log("Update NewTabEditor", this.checkbox.checked);
     chrome.storage.sync.set({"newTab": this.checkbox.checked});
   }
 }
@@ -259,10 +262,10 @@ chrome.storage.sync.get(["newTab"], function(result){
 });
 
 // Initilize search settings object
-let searchEdit;
+/*let searchEdit;
 chrome.storage.sync.get(["search"], function(result){
   searchEdit = new SearchEditor(result["search"]);
-});
+});*/
 
 // Initilize source settings object
 let srcEdit;
